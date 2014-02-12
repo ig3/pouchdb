@@ -1065,6 +1065,7 @@ describe('changes', function () {
         this.timeout(20000);
         var db = new PouchDB('http://infiniterequest.com', {skipSetup: true});
         db.changes({
+          timeout: 10000,
           complete: function(err, changes) {
             ok(err, 'got error');
             done();
