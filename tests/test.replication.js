@@ -660,7 +660,7 @@ describe('changes', function () {
       });
 
       it("Replicate large number of docs", function(start) {
-        this.timeout(15000);
+        this.timeout(30000);
         var docs = [];
         var num = 30;
         for (var i = 0; i < num; i++) {
@@ -957,6 +957,51 @@ describe('changes', function () {
         });
       });
 
+
+      it("Changes error", function(done) {
+        // 10 test documents
+        var num = 80;
+        var docs = [];
+        for (var i = 0; i < num; i++) {
+          docs.push({_id: 'doc_' + i, foo: 'bar_' + i});
+        }
+        // Set up test databases
+        testUtils.initDBPair(testHelpers.name, testHelpers.remote, function(db, remote) {
+          // Initialize remote with test documents
+          remote.bulkDocs({docs: docs}, {}, function(err, results) {
+            var changes = remote.changes;
+            var doc_count = 0;
+
+            // Mock remote.get to fail writing doc_3 (fourth doc)
+            remote.changes = function(opts) {
+              var onChange = opts.onChange;
+              opts.onChange = function() {
+                doc_count++;
+                onChange.apply(this, arguments);
+              };
+              var complete = opts.complete;
+              opts.complete = function() {
+                complete.apply(this, [{
+                  status: 500,
+                  error: 'mock changes error',
+                  reason: 'simulate an error from changes'
+                }]);
+              };
+              changes.apply(this, arguments);
+            };
+
+            // Replicate and confirm failure, docs_written and target docs
+            db.replicate.from(remote, function(err, result) {
+              ok(err, 'Replication completes with an error');
+              ok(doc_count === result.docs_read, 'All docs processed ' + doc_count + ', ' + result.docs_read);
+
+              remote.changes = changes;
+              done();
+            });
+          });
+        });
+      });
+
       // it("(#1240) - bulkWrite error", function () {
       //   
 
@@ -1077,7 +1122,6 @@ describe('changes', function () {
               if(arguments[0].slice(0,6) === '_local') {
                 local_count++;
                 if(local_count === 2) {
-                  console.log('get local: ' + JSON.stringify(arguments));
                   arguments[1].apply(null, [{
                     status: 500,
                     error: 'mock get error',
