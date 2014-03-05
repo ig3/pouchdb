@@ -5,7 +5,7 @@
 
 var testUtils = {};
 
-testUtils.errors = require('../libs/deps/errors');
+testUtils.errors = require('../lib/deps/errors');
 
 testUtils.couchHost = function () {
   if (typeof module !== 'undefined' && module.exports) {
