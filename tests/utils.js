@@ -2,7 +2,10 @@
 /* jshint -W079 */
 'use strict';
 
+
 var testUtils = {};
+
+testUtils.errors = require('../libs/deps/errors');
 
 testUtils.couchHost = function () {
   if (typeof module !== 'undefined' && module.exports) {
@@ -61,7 +64,7 @@ testUtils.cleanup = function (dbs, done) {
   var num = dbs.length;
   var errors = [];
 
-  var error = PouchDB.utils.errors.error(PouchDB.utils.errors.UNKNOWN_ERROR, 'error deleting idb database');
+  var error = testUtils.utils.errors.error(testUtils.utils.errors.UNKNOWN_ERROR, 'error deleting idb database');
   error.details = 'this is the detail';
   done(error);
   return;
