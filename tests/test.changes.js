@@ -20,7 +20,7 @@ adapters.map(function (adapter) {
     });
 
     it('All changes', function (done) {
-      window.results.push('All changes running');
+      window.results.failures.push('All changes running');
       var db = new PouchDB(dbs.name);
       db.post({ test: 'somestuff' }, function (err, info) {
         var promise = db.changes({
