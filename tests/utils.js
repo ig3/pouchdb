@@ -64,11 +64,6 @@ testUtils.cleanup = function (dbs, done) {
   var num = dbs.length;
   var errors = [];
 
-  var error = testUtils.utils.errors.error(testUtils.utils.errors.UNKNOWN_ERROR, 'error deleting idb database');
-  error.details = 'this is the detail';
-  done(error);
-  return;
-
   function dbDeleted(err, res) {
     if (err && err.status !== 404) {
       errors.push(err);
