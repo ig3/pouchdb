@@ -5,8 +5,6 @@
 
 var testUtils = {};
 
-testUtils.errors = require('../lib/deps/errors');
-
 testUtils.couchHost = function () {
   if (typeof module !== 'undefined' && module.exports) {
     return process.env.COUCH_HOST || 'http://localhost:5984';
