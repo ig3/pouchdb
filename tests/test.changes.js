@@ -1009,9 +1009,11 @@ adapters.map(function (adapter) {
         },
         complete: done
       });
-      db.post({key: 'value'});
       setTimeout(function () {
-        called.should.equal(1);
+        db.post({key: 'value'});
+      }, 500);
+      setTimeout(function () {
+        called.should.be.at.most(1);
         changes.cancel();
       }, 1000);
     });
