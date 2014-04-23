@@ -1,5 +1,6 @@
 'use strict';
 function MockDatabase(statusCodeToReturn, dataToReturn) {
+  this.once = this.removeListener = function () {};
   this.type = function () { return 'mock'; };
   this.id = function (callback) {
     callback(123);
